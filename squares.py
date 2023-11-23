@@ -2,7 +2,6 @@ from argparse import ArgumentParser
 
 """Computation of weighted average of squares."""
 
-
 def average_of_squares(list_of_numbers, list_of_weights=None):
     """ Return the weighted average of a list of values.
     
@@ -26,12 +25,12 @@ def average_of_squares(list_of_numbers, list_of_weights=None):
         effective_weights = list_of_weights
     else:
         effective_weights = [1] * len(list_of_numbers)
-    total_weighted_squares = sum(weight * number**2 for number, weight in zip(list_of_numbers, effective_weights))
-
-    total_weights = sum(effective_weights)
-
-    average = total_weighted_squares / total_weights
-    return average
+    squares = [
+        weight * number * number
+        for number, weight
+        in zip(list_of_numbers, effective_weights)
+    ]
+    return sum(squares)
 
 
 def convert_numbers(list_of_strings):
@@ -47,23 +46,29 @@ def convert_numbers(list_of_strings):
     for s in list_of_strings:
         # Take each string in the list, split it into substrings separated by
         # whitespace, and collect them into a single list...
-        tokens = s.split()
-        first_token = tokens[0]
-        if len(first_token) == 1 or (len(first_token) > 1 and not tokens[1:]):
-            all_numbers.append(int(first_token))
-    return all_numbers
+        all_numbers.extend([token.strip() for token in s.split()])
+    # ...then convert each substring into a number
+    return [float(number_string) for number_string in all_numbers]
+
 
 
 if __name__ == "__main__":
 
-    parser = ArgumentParser(description="So we can run it in the terminal")
+    parser = ArgumentParser(description="Find weighted average of squares")
+    parser.add_argument('squares.py')
+    parser.add_argument("numbers", nargs="+", help="List of numbers")
+    parser.add_argument("--weights", "-w", nargs="+", type=float, help="Optional weights, must have the same number of values as numbers.")
 
-    numbers_strings = ["1","2","4"]
-    weight_strings = ["1","1","1"]        
+    arguments= parser.parse_args()
+
+    if arguments.weights and len(arguments.weights) != len(arguments.numbers):
+        raise ValueError("Weights and numbers must have the same length")
+    result = average_of_squares(arguments.numbers, arguments.weights)
+
+    # numbers_strings = ["1","2","4"]
+    # weight_strings = ["1","1","1"]        
     
-    numbers = convert_numbers(numbers_strings)
-    weights = convert_numbers(weight_strings)
-    
-    result = average_of_squares(numbers, weights)
+    # numbers = convert_numbers(arguments.numbers)
+    # weights = convert_numbers(weight_strings)
     
     print(result)
