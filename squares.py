@@ -60,9 +60,6 @@ if __name__ == "__main__":
     parser.add_argument("--weights", "-w", nargs="+", type=float, help="Optional weights, must have the same number of values as numbers.")
 
     arguments= parser.parse_args()
-
-    if arguments.weights and len(arguments.weights) != len(arguments.numbers):
-        raise ValueError("Weights and numbers must have the same length")
     result = average_of_squares(arguments.numbers, arguments.weights)
 
     # numbers_strings = ["1","2","4"]
